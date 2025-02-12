@@ -3,6 +3,7 @@ import br.com.projedata.model.Funcionario;
 import java.math.BigDecimal;
 import java.sql.SQLOutput;
 import java.text.DecimalFormat;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
@@ -94,5 +95,26 @@ public class Principal {
                 System.out.println();
             }
         }
+
+        // Imprimir os funcionários que fazem aniversário no mês 10 e 12
+        List<Funcionario> aniversariantes = funcionarios.stream()
+                .filter(funcionario -> {
+                    int mesNascimento = funcionario.getDataNascimento().getMonthValue();
+                    return mesNascimento == Month.OCTOBER.getValue() || mesNascimento == Month.DECEMBER.getValue();
+                })
+                .collect(Collectors.toList());
+
+        aniversariantes.forEach(funcionario -> {
+            String dataFormatada = funcionario.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+            String salarioFormatado = new DecimalFormat("#,###.00").format(funcionario.getSalario());
+
+            System.out.printf("""
+                      Nome: %s
+                      Data de Nascimento: %s
+                      Salário: %s
+                      Função: %s
+                """, funcionario.getNome(), dataFormatada, salarioFormatado, funcionario.getFuncao());
+            System.out.println();
+        });
     }
 }
