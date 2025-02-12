@@ -1,5 +1,6 @@
 import br.com.projedata.model.Funcionario;
 
+import java.math.BigDecimal;
 import java.sql.SQLOutput;
 import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
@@ -35,7 +36,28 @@ public class Principal {
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DecimalFormat decimalFormatter = new DecimalFormat("#,###.00");
 
-        for (Funcionario funcionario : funcionarios) {
+        for (Funcionario funcionario : funcionariosOrdenados) {
+            String dataFormatada = funcionario.getDataNascimento().format(dateFormatter);
+            String salarioFormatado = decimalFormatter.format(funcionario.getSalario());
+
+            System.out.printf("""
+                       Nome: %s
+                       Data de Nascimento: %s
+                       Salário: %s
+                       Função: %s
+                    """, funcionario.getNome(), dataFormatada, salarioFormatado, funcionario.getFuncao());
+            System.out.println();
+        }
+
+        // Atualizando os salários com 10% de aumento
+        for (Funcionario funcionario : funcionariosOrdenados) {
+            BigDecimal salarioAtual = funcionario.getSalario();
+            BigDecimal aumento = salarioAtual.multiply(BigDecimal.valueOf(0.10));
+            BigDecimal novoSalario = salarioAtual.add(aumento);
+            funcionario.setSalario(novoSalario);
+        }
+
+        for (Funcionario funcionario : funcionariosOrdenados) {
             String dataFormatada = funcionario.getDataNascimento().format(dateFormatter);
             String salarioFormatado = decimalFormatter.format(funcionario.getSalario());
 
