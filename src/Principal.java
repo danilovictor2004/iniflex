@@ -75,5 +75,24 @@ public class Principal {
         Map<String, List<Funcionario>> agrupadosPorFuncao = funcionarios.stream()
                 .collect(Collectors.groupingBy(Funcionario::getFuncao));
 
+        // Imprimir os funcionários, agrupados por função
+        for (Map.Entry<String, List<Funcionario>> entry : agrupadosPorFuncao.entrySet()) {
+            String cargo = entry.getKey();
+            List<Funcionario> funcionariosPorCargo = entry.getValue();
+
+            System.out.println("Cargo: " + cargo);
+            for (Funcionario funcionario : funcionariosPorCargo) {
+                String dataFormatada = funcionario.getDataNascimento().format(dateFormatter);
+                String salarioFormatado = decimalFormatter.format(funcionario.getSalario());
+
+                System.out.printf("""
+                          Nome: %s
+                          Data de Nascimento: %s
+                          Salário: %s
+                          Função: %s
+                    """, funcionario.getNome(), dataFormatada, salarioFormatado, funcionario.getFuncao());
+                System.out.println();
+            }
+        }
     }
 }
