@@ -6,6 +6,7 @@ import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class Principal {
@@ -69,6 +70,10 @@ public class Principal {
                     """, funcionario.getNome(), dataFormatada, salarioFormatado, funcionario.getFuncao());
             System.out.println();
         }
+
+        // Agrupar os funcionários por função em um MAP, sendo a chave a “função” e o valor a “lista de funcionários”.
+        Map<String, List<Funcionario>> agrupadosPorFuncao = funcionarios.stream()
+                .collect(Collectors.groupingBy(Funcionario::getFuncao));
 
     }
 }
