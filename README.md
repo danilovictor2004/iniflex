@@ -1,7 +1,7 @@
 # Teste Prático de Programação
 
 ## Descrição do Projeto  
-Este projeto em **Java** é um teste prático de programação para uma indústria, utilizando orientação a objetos para modelar pessoas e funcionários, além de executar uma série de operações sobre uma lista de funcionários.
+Este projeto em **Java** é um teste prático de programação para Projedata, utilizando orientação a objetos para modelar a classe pessoa e funcionário, além de executar uma série de operações sobre uma lista de funcionários disponibilizado no desafio.
 
 ---
 
