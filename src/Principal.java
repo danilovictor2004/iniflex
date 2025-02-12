@@ -1,7 +1,7 @@
 import br.com.projedata.model.Funcionario;
 
 import java.math.BigDecimal;
-import java.sql.SQLOutput;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.Month;
@@ -14,6 +14,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Principal {
+    private static final BigDecimal SALARIO_MINIMO = new BigDecimal("1212.00");
+
     public static void main(String[] args) {
 
         List<Funcionario> funcionarios = Funcionario.listaFuncionarios();
@@ -130,5 +132,29 @@ public class Principal {
             int idade = Period.between(funcionario.getDataNascimento(), LocalDate.now()).getYears();
             System.out.printf("Funcionário mais velho: %s, Idade: %d anos%n", funcionario.getNome(), idade);
         });
+
+        // Imprimir o total dos salários dos funcionários
+        BigDecimal totalSalarios = funcionarios.stream()
+                .map(Funcionario::getSalario)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        decimalFormatter = new DecimalFormat("#,###.00");
+        String totalFormatado = decimalFormatter.format(totalSalarios);
+
+        System.out.println("Total dos Salários: R$ " + totalFormatado);
+
+        // Imprimir quantos salários mínimos ganha cada funcionário, considerando que o salário mínimo é R$1212.00
+        decimalFormatter = new DecimalFormat("#,###.00");
+
+        System.out.println("Quantidade de Salários Mínimos por Funcionário:");
+        DecimalFormat finalDecimalFormatter = decimalFormatter;
+        funcionarios.forEach(funcionario -> {
+            BigDecimal qtdSalariosMinimos = funcionario.getSalario().divide(SALARIO_MINIMO, 2, RoundingMode.HALF_UP);
+
+            System.out.printf("%s ganha %s salários mínimos%n",
+                    funcionario.getNome(),
+                    finalDecimalFormatter.format(qtdSalariosMinimos));
+        });
+
     }
 }
