@@ -1,5 +1,6 @@
 import br.com.projedata.model.Funcionario;
 
+import java.sql.SQLOutput;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +19,12 @@ public class Principal {
             System.out.println(funcionario);
         }
 
-
+        // Remover o funcionário “João” da lista
+        funcionariosOrdenados.removeIf(funcionario -> funcionario.getNome().equals("João"));
+        System.out.println();
+        for (Funcionario funcionario : funcionariosOrdenados) {
+            System.out.println(funcionario);
+        }
 
     }
 }
