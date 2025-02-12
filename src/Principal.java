@@ -16,14 +16,14 @@ public class Principal {
                 .collect(Collectors.toList());
 
         for (Funcionario funcionario : funcionariosOrdenados) {
-            System.out.println(funcionario);
+            System.out.println(funcionario.getNome());
         }
 
         // Remover o funcionário “João” da lista
         funcionariosOrdenados.removeIf(funcionario -> funcionario.getNome().equals("João"));
         System.out.println();
         for (Funcionario funcionario : funcionariosOrdenados) {
-            System.out.println(funcionario);
+            System.out.println(funcionario.getNome());
         }
 
     }
