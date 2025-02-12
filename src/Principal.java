@@ -3,11 +3,14 @@ import br.com.projedata.model.Funcionario;
 import java.math.BigDecimal;
 import java.sql.SQLOutput;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.time.Month;
+import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Principal {
@@ -78,10 +81,10 @@ public class Principal {
 
         // Imprimir os funcionários, agrupados por função
         for (Map.Entry<String, List<Funcionario>> entry : agrupadosPorFuncao.entrySet()) {
-            String cargo = entry.getKey();
+            String funcao = entry.getKey();
             List<Funcionario> funcionariosPorCargo = entry.getValue();
 
-            System.out.println("Cargo: " + cargo);
+            System.out.println("Função: " + funcao);
             for (Funcionario funcionario : funcionariosPorCargo) {
                 String dataFormatada = funcionario.getDataNascimento().format(dateFormatter);
                 String salarioFormatado = decimalFormatter.format(funcionario.getSalario());
@@ -97,6 +100,10 @@ public class Principal {
         }
 
         // Imprimir os funcionários que fazem aniversário no mês 10 e 12
+        System.out.println("""
+                ---------
+                Aniversariantes do mês 10 e 12
+                """);
         List<Funcionario> aniversariantes = funcionarios.stream()
                 .filter(funcionario -> {
                     int mesNascimento = funcionario.getDataNascimento().getMonthValue();
@@ -106,15 +113,22 @@ public class Principal {
 
         aniversariantes.forEach(funcionario -> {
             String dataFormatada = funcionario.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-            String salarioFormatado = new DecimalFormat("#,###.00").format(funcionario.getSalario());
 
             System.out.printf("""
                       Nome: %s
                       Data de Nascimento: %s
-                      Salário: %s
                       Função: %s
-                """, funcionario.getNome(), dataFormatada, salarioFormatado, funcionario.getFuncao());
+                """, funcionario.getNome(), dataFormatada, funcionario.getFuncao());
             System.out.println();
+        });
+
+        // Imprimir o funcionário com a maior idade, exibir os atributos: nome e idade
+        Optional<Funcionario> maisVelho = funcionarios.stream()
+                .min(Comparator.comparing(Funcionario::getDataNascimento));
+
+        maisVelho.ifPresent(funcionario -> {
+            int idade = Period.between(funcionario.getDataNascimento(), LocalDate.now()).getYears();
+            System.out.printf("Funcionário mais velho: %s, Idade: %d anos%n", funcionario.getNome(), idade);
         });
     }
 }
