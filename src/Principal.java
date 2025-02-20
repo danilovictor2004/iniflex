@@ -1,3 +1,4 @@
+import br.com.projedata.desafio.Desafio;
 import br.com.projedata.model.Funcionario;
 
 import java.math.BigDecimal;
@@ -14,147 +15,28 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class Principal {
-    private static final BigDecimal SALARIO_MINIMO = new BigDecimal("1212.00");
-
     public static void main(String[] args) {
 
-        List<Funcionario> funcionarios = Funcionario.listaFuncionarios();
-
-        // Inserir todos os funcionários.
-        List<Funcionario> funcionariosOrdenados = funcionarios.stream()
-                .sorted(Comparator.comparing(Funcionario::getNome))
-                .collect(Collectors.toList());
-
-        for (Funcionario funcionario : funcionariosOrdenados) {
-            System.out.println(funcionario.getNome());
-        }
-
-        // Remover o funcionário “João” da lista
-        funcionariosOrdenados.removeIf(funcionario -> funcionario.getNome().equals("João"));
-        System.out.println();
-        for (Funcionario funcionario : funcionariosOrdenados) {
-            System.out.println(funcionario.getNome());
-        }
-
-        // Imprimir todos os funcionários com todas suas informações, sendo que:
-        // • informação de data deve ser exibido no formato dd/mm/aaaa;
-        // • informação de valor numérico deve ser exibida no formatado com separador de milhar como ponto
-        // e decimal como vírgula.
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        DecimalFormat decimalFormatter = new DecimalFormat("#,###.00");
-
-        for (Funcionario funcionario : funcionariosOrdenados) {
-            String dataFormatada = funcionario.getDataNascimento().format(dateFormatter);
-            String salarioFormatado = decimalFormatter.format(funcionario.getSalario());
-
-            System.out.printf("""
-                       Nome: %s
-                       Data de Nascimento: %s
-                       Salário: %s
-                       Função: %s
-                    """, funcionario.getNome(), dataFormatada, salarioFormatado, funcionario.getFuncao());
-            System.out.println();
-        }
-
-        // Atualizando os salários com 10% de aumento
-        for (Funcionario funcionario : funcionariosOrdenados) {
-            BigDecimal salarioAtual = funcionario.getSalario();
-            BigDecimal aumento = salarioAtual.multiply(BigDecimal.valueOf(0.10));
-            BigDecimal novoSalario = salarioAtual.add(aumento);
-            funcionario.setSalario(novoSalario);
-        }
-
-        for (Funcionario funcionario : funcionariosOrdenados) {
-            String dataFormatada = funcionario.getDataNascimento().format(dateFormatter);
-            String salarioFormatado = decimalFormatter.format(funcionario.getSalario());
-
-            System.out.printf("""
-                       Nome: %s
-                       Data de Nascimento: %s
-                       Salário: %s
-                       Função: %s
-                    """, funcionario.getNome(), dataFormatada, salarioFormatado, funcionario.getFuncao());
-            System.out.println();
-        }
-
-        // Agrupar os funcionários por função em um MAP, sendo a chave a “função” e o valor a “lista de funcionários”.
-        Map<String, List<Funcionario>> agrupadosPorFuncao = funcionarios.stream()
-                .collect(Collectors.groupingBy(Funcionario::getFuncao));
-
-        // Imprimir os funcionários, agrupados por função
-        for (Map.Entry<String, List<Funcionario>> entry : agrupadosPorFuncao.entrySet()) {
-            String funcao = entry.getKey();
-            List<Funcionario> funcionariosPorCargo = entry.getValue();
-
-            System.out.println("Função: " + funcao);
-            for (Funcionario funcionario : funcionariosPorCargo) {
-                String dataFormatada = funcionario.getDataNascimento().format(dateFormatter);
-                String salarioFormatado = decimalFormatter.format(funcionario.getSalario());
-
-                System.out.printf("""
-                          Nome: %s
-                          Data de Nascimento: %s
-                          Salário: %s
-                          Função: %s
-                    """, funcionario.getNome(), dataFormatada, salarioFormatado, funcionario.getFuncao());
-                System.out.println();
-            }
-        }
-
-        // Imprimir os funcionários que fazem aniversário no mês 10 e 12
-        System.out.println("""
-                ---------
-                Aniversariantes do mês 10 e 12
-                """);
-        List<Funcionario> aniversariantes = funcionarios.stream()
-                .filter(funcionario -> {
-                    int mesNascimento = funcionario.getDataNascimento().getMonthValue();
-                    return mesNascimento == Month.OCTOBER.getValue() || mesNascimento == Month.DECEMBER.getValue();
-                })
-                .collect(Collectors.toList());
-
-        aniversariantes.forEach(funcionario -> {
-            String dataFormatada = funcionario.getDataNascimento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-
-            System.out.printf("""
-                      Nome: %s
-                      Data de Nascimento: %s
-                      Função: %s
-                """, funcionario.getNome(), dataFormatada, funcionario.getFuncao());
-            System.out.println();
-        });
-
-        // Imprimir o funcionário com a maior idade, exibir os atributos: nome e idade
-        Optional<Funcionario> maisVelho = funcionarios.stream()
-                .min(Comparator.comparing(Funcionario::getDataNascimento));
-
-        maisVelho.ifPresent(funcionario -> {
-            int idade = Period.between(funcionario.getDataNascimento(), LocalDate.now()).getYears();
-            System.out.printf("Funcionário mais velho: %s, Idade: %d anos%n", funcionario.getNome(), idade);
-        });
-
-        // Imprimir o total dos salários dos funcionários
-        BigDecimal totalSalarios = funcionarios.stream()
-                .map(Funcionario::getSalario)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-        decimalFormatter = new DecimalFormat("#,###.00");
-        String totalFormatado = decimalFormatter.format(totalSalarios);
-
-        System.out.println("Total dos Salários: R$ " + totalFormatado);
-
-        // Imprimir quantos salários mínimos ganha cada funcionário, considerando que o salário mínimo é R$1212.00
-        decimalFormatter = new DecimalFormat("#,###.00");
-
-        System.out.println("Quantidade de Salários Mínimos por Funcionário:");
-        DecimalFormat finalDecimalFormatter = decimalFormatter;
-        funcionarios.forEach(funcionario -> {
-            BigDecimal qtdSalariosMinimos = funcionario.getSalario().divide(SALARIO_MINIMO, 2, RoundingMode.HALF_UP);
-
-            System.out.printf("%s ganha %s salários mínimos%n",
-                    funcionario.getNome(),
-                    finalDecimalFormatter.format(qtdSalariosMinimos));
-        });
+        Desafio desafio = new Desafio();
+        desafio.resolucaoDesafio1();
+        desafio.quebraLinha();
+        desafio.resolucaoDesafio2();
+        desafio.quebraLinha();
+        desafio.resolucaoDesafio3();
+        desafio.quebraLinha();
+        desafio.resolucaoDesafio4();
+        desafio.quebraLinha();
+        desafio.resolucaoDesafio5();
+        desafio.quebraLinha();
+        desafio.resolucaoDesafio6();
+        desafio.quebraLinha();
+        desafio.resolucaoDesafio7();
+        desafio.quebraLinha();
+        desafio.resolucaoDesafio8();
+        desafio.quebraLinha();
+        desafio.resolucaoDesafio9();
+        desafio.quebraLinha();
+        desafio.resolucaoDesafio10();
 
     }
 }
